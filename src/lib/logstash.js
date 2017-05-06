@@ -4,7 +4,6 @@ const fs = require('fs');
 const os = require('os');
 const tls = require('tls');
 const CBuffer = require('CBuffer');
-const _ = require('lodash');
 const util = require('util');
 const EventEmitter = require('events').EventEmitter;
 
@@ -89,7 +88,7 @@ LogstashStream.prototype.write = function logstashWrite(entry) {
     entry = JSON.parse(entry);
   }
 
-  const rec = _.cloneDeep(entry);
+  const rec = Object.assign({}, entry);
 
   level = rec.level;
 
@@ -119,7 +118,7 @@ LogstashStream.prototype.write = function logstashWrite(entry) {
 
   rec.pid = this.pid;
 
-  this.send(JSON.stringify(_.extend({}, msg, rec), bunyan.safeCycles()));
+  this.send(JSON.stringify(Object.assign({}, msg, rec), bunyan.safeCycles()));
 };
 
 /**

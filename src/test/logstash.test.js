@@ -553,7 +553,7 @@ describe('logstash', () => {
         expect(sendStub.callCount).to.equal(2);
         expect(sendStub.withArgs('a').callCount).to.equal(1);
         expect(sendStub.withArgs('b').callCount).to.equal(1);
-        expect(stream.log_queue).to.have.property('size', 0);
+        expect(stream.log_queue.toArray()).to.have.length(0);
       });
     });
     describe('sendLog', () => {
