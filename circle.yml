@@ -9,6 +9,7 @@ dependencies:
     - npm install -g codecov
 test:
   override:
-    - npm run build
+    - npm test
     - codecov -t $CODECOV_TOKEN || echo 'Sending coverage failed'
+    - npm run prepare
     - nvm i 4.0.0 && npm run test-dist
