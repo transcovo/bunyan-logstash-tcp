@@ -67,6 +67,7 @@ function LogstashStream(options) {
   this.connected = false;
   this.socket = null;
   this.retries = -1;
+  this.canWriteToExternalSocket = false;
 
   this.max_connect_retries = (typeof options.max_connect_retries === 'number') ? options.max_connect_retries : 4;
   this.retry_interval = options.retry_interval || 100;
@@ -165,8 +166,10 @@ LogstashStream.prototype.connect = function connect() {
 
   this.socket.on('connect', () => {
     self.retries = 0;
+    this.canWriteToExternalSocket = true;
     self.emit('connect');
   });
+  this.socket.on('drain', () => (this.canWriteToExternalSocket = true));
 
   this.socket.on('close', () => {
     self.connected = false;
@@ -228,7 +231,9 @@ LogstashStream.prototype.flush = function flush() {
  * @returns {void}
  */
 LogstashStream.prototype.sendLog = function sendLog(message) {
-  this.socket.write(`${message}\n`);
+  if(!this.socket.write(`${message}\n`)) {
+    this.canWriteToExternalSocket = false;
+  }
 };
 
 
@@ -242,7 +247,7 @@ LogstashStream.prototype.send = function logstashSend(message) {
   const self = this;
 
   // send tcp logs
-  if (!self.connected) {
+  if (!self.connected || !this.canWriteToExternalSocket) {
     self.log_queue.push({
       message
     });
