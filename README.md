@@ -12,9 +12,10 @@ A tcp logger for [Logstash](http://logstash.net/docs/1.4.2/inputs/tcp)
 | server      | string   | `os.hostname()` |
 | host        | string   | `"127.0.0.1"`   |
 | port        | number   | `9999`          |
-| application | string   | `process.title` |
+| appName     | string   | `process.title` |
 | pid         | string   | `process.pid`   |
 | tags        | string[] | `["bunyan"]`    |
+| type        | string   | `undefined`     |
 
 ## Adding the bunyan-logstash stream to Bunyan
 
